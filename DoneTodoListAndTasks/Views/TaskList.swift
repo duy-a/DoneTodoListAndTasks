@@ -14,8 +14,6 @@ struct TaskList: View {
     @Query private var tasks: [Task]
 
     @State private var path = [Task]()
-    @State private var isShowingTaskDeleteConfirmation: Bool = false
-    @State private var taskToDelete: Task? = nil
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -23,9 +21,9 @@ struct TaskList: View {
                 ForEach(tasks) { task in
                     TaskListItem(task: task)
                 }
-                .onDelete(perform: getTaskToDelete)
+                .onDelete(perform: deleteTask)
             }
-            .navigationDestination(for: Task.self, destination: TaskForm.init)
+            .navigationDestination(for: Task.self, destination: TaskDetails.init)
             .toolbar {
                 ToolbarItemGroup(placement: .bottomBar) {
                     Spacer()
@@ -37,28 +35,15 @@ struct TaskList: View {
                     }
                 }
             }
-            .alert(isPresented: $isShowingTaskDeleteConfirmation) {
-                Alert(title: Text("Are you sure?"),
-                      message: Text("Cannot undo this action"),
-                      primaryButton: .destructive(Text("Delete"), action: deleteTask),
-                      secondaryButton: .cancel { self.taskToDelete = nil })
-            }
         }
     }
 
-    func getTaskToDelete(_ indexSet: IndexSet) {
+    func deleteTask(_ indexSet: IndexSet) {
         for i in indexSet {
-            self.taskToDelete = tasks[i]
+            let taskToDelete = tasks[i]
+            modelContext.delete(taskToDelete)
         }
-        isShowingTaskDeleteConfirmation = true
-    }
 
-    func deleteTask() {
-        if let taskToDelete {
-            withAnimation {
-                modelContext.delete(taskToDelete)
-            }
-        }
     }
 }
 

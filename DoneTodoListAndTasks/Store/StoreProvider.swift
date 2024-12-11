@@ -5,8 +5,10 @@
 //  Created by Duy Anh Ngac on 3/12/24.
 //
 
+import Foundation
 import SwiftData
 
+@MainActor
 class StoreProvider {
     static let shared: StoreProvider = .init()
 
@@ -30,8 +32,16 @@ class StoreProvider {
 // Container used for preview
 extension StoreProvider {
     static let previewContainer: ModelContainer = {
-        let storeProvide: StoreProvider = .init(inMemory: true)
+        let storeProvider: StoreProvider = .init(inMemory: true)
 
-        return storeProvide.modelContainer
+        for i in 1 ..< 10 {
+            let task = Task(title: "Task \(i)",
+                            dueDate: Bool.random() ? Calendar.current.date(byAdding: .day, value: i, to: .now) : nil, isCompleted:
+                            Bool.random())
+
+            storeProvider.modelContainer.mainContext.insert(task)
+        }
+
+        return storeProvider.modelContainer
     }()
 }

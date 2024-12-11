@@ -36,6 +36,7 @@ struct TaskListItem: View {
                 }
             }
         }
+        .transition(.move(edge: .bottom))
     }
 }
 
