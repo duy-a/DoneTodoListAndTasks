@@ -18,12 +18,21 @@ struct TaskDetails: View {
     @State private var showingDatePicker: Bool = false
     @State private var dueDate: Date = .now
     
+    @State private var hasDueTime: Bool = false
+    @State private var showingTimePicker: Bool = false
+    @State private var dueTime: Date = .now
+    
     init(task: Task) {
         self.task = task
         
         if let dueDate = task.dueDate {
             self._hasDueDate = State(wrappedValue: true)
             self._dueDate = State(wrappedValue: dueDate)
+        }
+        
+        if let dueTime = task.dueTime {
+            self._hasDueTime = State(wrappedValue: true)
+            self._dueTime = State(wrappedValue: dueTime)
         }
     }
     
@@ -35,7 +44,7 @@ struct TaskDetails: View {
             
             Section {
                 HStack {
-                    Label("Test", systemImage: "calendar.circle.fill")
+                    Label("Due date", systemImage: "calendar.circle.fill")
                         .symbolRenderingMode(.multicolor)
                         .font(.title)
                         .labelStyle(.iconOnly)
@@ -60,11 +69,13 @@ struct TaskDetails: View {
                     }
                     .onChange(of: hasDueDate) {
                         if hasDueDate {
-                            showingDatePicker = true
                             task.dueDate = dueDate
                         } else {
                             showingDatePicker = false
                             task.dueDate = nil
+                            
+                            hasDueTime = false
+                            task.dueTime = nil
                         }
                     }
                 }
@@ -76,6 +87,53 @@ struct TaskDetails: View {
                             task.dueDate = dueDate
                         }
                         .transition(.move(edge: .bottom))
+                }
+                
+                HStack {
+                    Label("Due time", systemImage: "clock.circle.fill")
+                        .symbolRenderingMode(.multicolor)
+                        .font(.title)
+                        .labelStyle(.iconOnly)
+             
+                    Toggle(isOn: $hasDueTime.animation()) {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("Due time")
+                        
+                            if hasDueTime {
+                                Button {
+                                    withAnimation {
+                                        showingTimePicker.toggle()
+                                    }
+                                } label: {
+                                    Text(dueTime, format: .dateTime.hour().minute())
+                                }
+                                .font(.footnote)
+                                .buttonStyle(.plain)
+                                .foregroundStyle(.blue)
+                            }
+                        }
+                    }
+                    .onChange(of: hasDueTime) {
+                        if hasDueTime {
+                            hasDueDate = true
+                            
+                            task.dueTime = dueTime
+                        } else {
+                            showingTimePicker = false
+                            task.dueTime = nil
+                        }
+                    }
+                }
+                
+                if showingTimePicker {
+                    DatePicker("Task due time", selection: $dueTime, displayedComponents: .hourAndMinute)
+                        .datePickerStyle(.wheel)
+                        .labelsHidden()
+                        .onChange(of: dueTime) {
+                            task.dueTime = dueTime
+                        }
+                        .transition(.move(edge: .bottom))
+                        
                 }
             }
         }
@@ -117,7 +175,7 @@ struct TaskDetails: View {
 }
 
 #Preview {
-    let exampleTask = Task(title: "Example", dueDate: .now, isCompleted: false)
+    let exampleTask = Task(title: "Example", dueDate: .now, dueTime: .now, isCompleted: false)
         
     NavigationStack {
         TaskDetails(task: exampleTask)

@@ -35,9 +35,12 @@ extension StoreProvider {
         let storeProvider: StoreProvider = .init(inMemory: true)
 
         for i in 1 ..< 10 {
+            let haveDate: Bool = .random()
+            
             let task = Task(title: "Task \(i)",
-                            dueDate: Bool.random() ? Calendar.current.date(byAdding: .day, value: i, to: .now) : nil, isCompleted:
-                            Bool.random())
+                            dueDate: haveDate ? Calendar.current.date(byAdding: .day, value: i, to: .now) : nil,
+                            dueTime: haveDate ? Calendar.current.date(byAdding: .hour, value: i, to: .now) : nil,
+                            isCompleted: Bool.random())
 
             storeProvider.modelContainer.mainContext.insert(task)
         }

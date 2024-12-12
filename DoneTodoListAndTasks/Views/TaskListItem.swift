@@ -13,7 +13,7 @@ struct TaskListItem: View {
 
     var body: some View {
         NavigationLink(value: task) {
-            HStack {
+            HStack(spacing: 10) {
                 Button {
                     withAnimation {
                         task.isCompleted.toggle()
@@ -29,10 +29,20 @@ struct TaskListItem: View {
                 VStack(alignment: .leading) {
                     Text(task.title)
                     
-                    if let dueDate = task.dueDate {
-                        Text(dueDate, format: .dateTime)
-                            .foregroundStyle(.secondary)
+                    HStack {
+                        if let dueDate = task.dueDate {
+                            Text(dueDate, format: .dateTime.day().month().year())
+                                
+                        }
+                        
+                        if let dueTime = task.dueTime {
+                            Text(dueTime, format: .dateTime.hour().minute())
+                        }
+                        
                     }
+                    .foregroundStyle(.secondary)
+                    .font(.footnote)
+                    
                 }
             }
         }
@@ -40,6 +50,17 @@ struct TaskListItem: View {
     }
 }
 
-// #Preview {
-//    TaskListItem()
-// }
+ #Preview {
+     let hasDateTime: Bool = .random()
+     let exampleTask = Task(title: "Example",
+                            dueDate: hasDateTime ? .now : nil,
+                            dueTime: hasDateTime ? .now : nil,
+                            isCompleted: false)
+     
+     NavigationStack {
+         List {
+             TaskListItem(task: exampleTask)
+                 .modelContainer(StoreProvider.previewContainer)
+         }
+     }
+ }
