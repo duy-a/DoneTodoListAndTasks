@@ -72,6 +72,7 @@ struct TaskDetails: View {
                             task.dueDate = dueDate
                         } else {
                             showingDatePicker = false
+                            dueDate = .now
                             task.dueDate = nil
                             
                             hasDueTime = false
@@ -120,6 +121,7 @@ struct TaskDetails: View {
                             task.dueTime = dueTime
                         } else {
                             showingTimePicker = false
+                            dueTime = .now
                             task.dueTime = nil
                         }
                     }

@@ -8,16 +8,27 @@
 import SwiftData
 import SwiftUI
 
+enum ListCategory: String, CaseIterable {
+    case all
+}
+
 struct ContentView: View {
+    @State private var selectedList: ListCategory? = nil
+
     var body: some View {
         NavigationSplitView {
-            List {
-                Text("Here will be filters all or today")
-                NavigationLink("All tasks", value: 1)
+            List(ListCategory.allCases, id: \.self, selection: $selectedList) { category in
+                NavigationLink(category.rawValue, value: category)
             }
         }
         detail: {
-            TaskList()
+            if let selectedList {
+                switch selectedList {
+                    case .all: TaskList()
+                }
+            } else {
+                Text("Please selected a list")
+            }
         }
     }
 }

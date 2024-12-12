@@ -28,10 +28,15 @@ struct TaskList: View {
                 ToolbarItemGroup(placement: .bottomBar) {
                     Spacer()
 
-                    Button("New Task") {
+                    Button {
                         let newTask = Task()
                         modelContext.insert(newTask)
                         path = [newTask]
+                    } label: {
+                        HStack(alignment: .center) {
+                            Image(systemName: "plus.circle.fill")
+                            Text("New Task")
+                        }
                     }
                 }
             }
@@ -43,7 +48,6 @@ struct TaskList: View {
             let taskToDelete = tasks[i]
             modelContext.delete(taskToDelete)
         }
-
     }
 }
 
