@@ -69,6 +69,9 @@ struct TaskDetails: View {
                     }
                     .onChange(of: hasDueDate) {
                         if hasDueDate {
+                            if !showingTimePicker {
+                                showingDatePicker = true
+                            }
                             task.dueDate = dueDate
                         } else {
                             showingDatePicker = false
@@ -118,6 +121,7 @@ struct TaskDetails: View {
                         if hasDueTime {
                             hasDueDate = true
                             
+                            showingTimePicker = true
                             task.dueTime = dueTime
                         } else {
                             showingTimePicker = false
