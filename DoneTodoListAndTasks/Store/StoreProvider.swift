@@ -31,17 +31,11 @@ class StoreProvider {
 
 // Container used for preview
 extension StoreProvider {
+    
     static let previewContainer: ModelContainer = {
         let storeProvider: StoreProvider = .init(inMemory: true)
 
-        for i in 1 ..< 10 {
-            let haveDate: Bool = .random()
-            
-            let task = Task(title: "Task \(i)",
-                            dueDate: haveDate ? Calendar.current.date(byAdding: .day, value: i, to: .now) : nil,
-                            dueTime: haveDate ? Calendar.current.date(byAdding: .hour, value: i, to: .now) : nil,
-                            isCompleted: Bool.random())
-
+        for task in Task.sampleData {
             storeProvider.modelContainer.mainContext.insert(task)
         }
 

@@ -29,10 +29,9 @@ struct TaskListItem: View {
                 VStack(alignment: .leading) {
                     Text(task.title)
                     
-                    HStack {
+                    HStack(spacing: 5) {
                         if let dueDate = task.dueDate {
-                            Text(dueDate, format: .dateTime.day().month().year())
-                                
+                            Text(dueDate, format: .dateTime.day().month(.twoDigits).year())
                         }
                         
                         if let dueTime = task.dueTime {
@@ -51,15 +50,9 @@ struct TaskListItem: View {
 }
 
  #Preview {
-     let hasDateTime: Bool = .random()
-     let exampleTask = Task(title: "Example",
-                            dueDate: hasDateTime ? .now : nil,
-                            dueTime: hasDateTime ? .now : nil,
-                            isCompleted: false)
-     
      NavigationStack {
          List {
-             TaskListItem(task: exampleTask)
+             TaskListItem(task: Task.sampleData.randomElement()!)
                  .modelContainer(StoreProvider.previewContainer)
          }
      }

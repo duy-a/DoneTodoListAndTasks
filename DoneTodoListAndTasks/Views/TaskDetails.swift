@@ -72,14 +72,14 @@ struct TaskDetails: View {
                             if !showingTimePicker {
                                 showingDatePicker = true
                             }
-                            task.dueDate = dueDate
+                            task.setDueDate(date: dueDate)
                         } else {
                             showingDatePicker = false
                             dueDate = .now
-                            task.dueDate = nil
+                            task.setDueDate(date: nil)
                             
                             hasDueTime = false
-                            task.dueTime = nil
+                            task.setDueTime(time: nil)
                         }
                     }
                 }
@@ -88,7 +88,7 @@ struct TaskDetails: View {
                     DatePicker("Task due date", selection: $dueDate, displayedComponents: .date)
                         .datePickerStyle(.graphical)
                         .onChange(of: dueDate) {
-                            task.dueDate = dueDate
+                            task.setDueDate(date: dueDate)
                         }
                         .transition(.move(edge: .bottom))
                 }
@@ -122,11 +122,11 @@ struct TaskDetails: View {
                             hasDueDate = true
                             
                             showingTimePicker = true
-                            task.dueTime = dueTime
+                            task.setDueTime(time: dueTime)
                         } else {
                             showingTimePicker = false
                             dueTime = .now
-                            task.dueTime = nil
+                            task.setDueTime(time: nil)
                         }
                     }
                 }
@@ -136,10 +136,9 @@ struct TaskDetails: View {
                         .datePickerStyle(.wheel)
                         .labelsHidden()
                         .onChange(of: dueTime) {
-                            task.dueTime = dueTime
+                            task.setDueTime(time: dueTime)
                         }
                         .transition(.move(edge: .bottom))
-                        
                 }
             }
         }
@@ -181,10 +180,8 @@ struct TaskDetails: View {
 }
 
 #Preview {
-    let exampleTask = Task(title: "Example", dueDate: .now, dueTime: .now, isCompleted: false)
-        
     NavigationStack {
-        TaskDetails(task: exampleTask)
+        TaskDetails(task: Task.sampleData[0])
             .modelContainer(StoreProvider.previewContainer)
     }
 }

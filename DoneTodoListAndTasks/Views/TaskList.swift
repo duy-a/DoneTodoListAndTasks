@@ -12,19 +12,31 @@ struct TaskList: View {
     @Environment(\.modelContext) private var modelContext
 
     @Query private var tasks: [Task]
-
     @State private var path = [Task]()
+    
+    @State private var sortOder: Task.SortOder = .byDueDate
 
     var body: some View {
         NavigationStack(path: $path) {
-            List {
-                ForEach(tasks) { task in
-                    TaskListItem(task: task)
+            Group {
+                switch sortOder {
+                case .byDueDate:
+                    TaskSortByDue(tasks: tasks)
+                case .byTitle:
+                    TaskSortByTitle(tasks: tasks)
                 }
-                .onDelete(perform: deleteTask)
             }
             .navigationDestination(for: Task.self, destination: TaskDetails.init)
             .toolbar {
+                ToolbarItemGroup(placement: .primaryAction) {
+                    Menu("Sort Order", systemImage: "arrow.up.arrow.down.circle") {
+                        Picker("Sort by", selection: $sortOder.animation()) {
+                            Text("Due date").tag(Task.SortOder.byDueDate)
+                            Text("Title").tag(Task.SortOder.byTitle)
+                        }
+                    }
+                }
+                
                 ToolbarItemGroup(placement: .bottomBar) {
                     Spacer()
 
@@ -40,13 +52,6 @@ struct TaskList: View {
                     }
                 }
             }
-        }
-    }
-
-    func deleteTask(_ indexSet: IndexSet) {
-        for i in indexSet {
-            let taskToDelete = tasks[i]
-            modelContext.delete(taskToDelete)
         }
     }
 }
