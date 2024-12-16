@@ -13,8 +13,21 @@ struct TaskList: View {
 
     @Query private var tasks: [Task]
     @State private var path = [Task]()
-    
+
     @State private var sortOder: Task.SortOder = .byDueDate
+
+    init(listCategory: ListCategory) {
+        let today = Calendar.current.startOfDay(for: .now)
+        
+        switch listCategory {
+        case .all:
+            return
+        case .today:
+            self._tasks = Query(filter: #Predicate {
+                $0.dueDate == today
+            })
+        }
+    }
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -36,7 +49,7 @@ struct TaskList: View {
                         }
                     }
                 }
-                
+
                 ToolbarItemGroup(placement: .bottomBar) {
                     Spacer()
 
@@ -57,6 +70,6 @@ struct TaskList: View {
 }
 
 #Preview {
-    TaskList()
+    TaskList(listCategory: .all)
         .modelContainer(StoreProvider.previewContainer)
 }

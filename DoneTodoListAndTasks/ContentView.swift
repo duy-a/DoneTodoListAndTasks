@@ -10,6 +10,7 @@ import SwiftUI
 
 enum ListCategory: String, CaseIterable {
     case all
+    case today
 }
 
 struct ContentView: View {
@@ -24,7 +25,8 @@ struct ContentView: View {
         detail: {
             if let selectedList {
                 switch selectedList {
-                    case .all: TaskList()
+                case .all: TaskList(listCategory: .all)
+                case .today: TaskList(listCategory: .today)
                 }
             } else {
                 Text("Please selected a list")
