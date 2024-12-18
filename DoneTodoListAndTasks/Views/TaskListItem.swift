@@ -11,6 +11,16 @@ import SwiftUI
 struct TaskListItem: View {
     @Bindable var task: Task
 
+    private var isPastDue: Bool {
+        guard let dueDate = task.dueDate else { return false }
+        
+        if let dueTime = task.dueTime {
+            return Date.now >= dueTime
+        } else {
+           return Calendar.current.startOfDay(for: .now) > dueDate
+        }
+    }
+    
     var body: some View {
         NavigationLink(value: task) {
             HStack(spacing: 10) {
@@ -39,7 +49,7 @@ struct TaskListItem: View {
                         }
                         
                     }
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(isPastDue ? .red : .secondary)
                     .font(.footnote)
                     
                 }

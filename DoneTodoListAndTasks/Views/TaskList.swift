@@ -16,9 +16,18 @@ struct TaskList: View {
 
     @State private var sortOder: Task.SortOder = .byDueDate
 
+    var sortedTasks: [Task] {
+        switch sortOder {
+        case .byDueDate:
+            return tasks.sortByDueDate()
+        case .byTitle:
+            return tasks.sortByTitle()
+        }
+    }
+
     init(listCategory: ListCategory) {
         let today = Calendar.current.startOfDay(for: .now)
-        
+
         switch listCategory {
         case .all:
             return
@@ -31,12 +40,9 @@ struct TaskList: View {
 
     var body: some View {
         NavigationStack(path: $path) {
-            Group {
-                switch sortOder {
-                case .byDueDate:
-                    TaskSortByDue(tasks: tasks)
-                case .byTitle:
-                    TaskSortByTitle(tasks: tasks)
+            List {
+                ForEach(sortedTasks) { task in
+                    TaskListItem(task: task)
                 }
             }
             .navigationDestination(for: Task.self, destination: TaskDetails.init)

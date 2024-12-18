@@ -74,3 +74,37 @@ extension Task {
         case byTitle
     }
 }
+
+extension [Task] {
+    func sortByTitle() -> [Task] {
+        return self.sorted {
+            $0.title < $1.title
+        }
+    }
+    
+    func sortByDueDate() -> [Task] {
+        return self.sorted {
+            if let date1 = $0.dueDate, let date2 = $1.dueDate {
+                if date1 != date2 {
+                    return date1 < date2
+                }
+
+                if let time1 = $0.dueTime, let time2 = $1.dueTime {
+                    return time1 < time2
+                }
+
+                return $0.dueTime != nil
+            }
+
+            if $0.dueDate != nil {
+                return true
+            }
+
+            if $1.dueDate == nil {
+                return false
+            }
+
+            return $0.title < $1.title
+        }
+    }
+}
